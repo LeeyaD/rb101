@@ -1,0 +1,57 @@
+en:
+  welcome: Welcome to Calculator!
+  name?: "Enter your name:"
+  valid_name: Make sure to enter a valid name.
+  greeting: Hi
+  first_number: What's your first number?
+  second_number: What's your second number?
+  invalid_number: Hey! That's not a valid number.
+  operator_prompt: |
+    What operation would you like to perform?
+       1) add
+       2) subtract
+       3) multiply
+       4) divide
+  invalid_op: Must choose 1, 2, 3 or 4
+  interim_msg: Computing...
+  result: The result is...
+  again?: Want to perform another calculation? (Y to calculate again)
+  goodbye: Thank you for calculating!
+es:
+  welcome: Bienvenido a la calculadora!
+  name?: "Entre su nombre:"
+  valid_name: Asegúrese de entrar un nombre válido.
+  greeting: Hola
+  first_number: ¿Cual es tu primer numero?
+  second_number: ¿Cual es tu segundo numero?
+  invalid_number: ¡Oye! Ese no es un número válido.
+  operator_prompt: |
+    ¿Qué operación le gustaría realizar?
+       1) agregar
+       2) sustraer
+       3) multiplicar
+       4) dividir
+  invalid_op: Debe elegir 1, 2, 3 o 4
+  interim_msg: computando ahora...
+  result: El resultado es...
+  again?: ¿Qué realizar otro calculo? (Y para calcular de nuevo)
+  goodbye: ¡Gracias por calcular!
+ko:
+  welcome: 계산기에 오신 걸 환영합니다!
+  name?: "이름을 입력하다:"
+  valid_name: 유효한 번호를 입력해야 합니다.
+  greeting: 안영하세요?
+  first_number: 첫 번째 번호는 뭐예요?
+  second_number: 두 번째 번호는 뭐예요?
+  invalid_number: 죄송합니다! 유효한 번호가 아닙니다.
+  operator_prompt: |
+    어떤 수학 연산을 하고 싶습니까?
+       1) 덧셈
+       2) 뺄셈
+       3) 곱셈
+       4) 나눗셈
+  invalid_op: 1, 2, 3 또는 4를 선택해야 합니다
+  interim_msg: 계산하는 중...
+  result: 결과는...
+  again?: 다른 계산을 수행할 수 있는 방법은 무엇입니까? (다시 계산하면 Y)
+  goodbye: 계산해 주셔서 감사합니다!

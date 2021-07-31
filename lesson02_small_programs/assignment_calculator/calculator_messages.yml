@@ -13,9 +13,10 @@ en:
        3) multiply
        4) divide
   invalid_op: Must choose 1, 2, 3 or 4
+  invalid_division: You can't divide by zero, please choose a different operation.
   interim_msg: Computing...
   result: The result is...
-  again?: Want to perform another calculation? (Y to calculate again)
+  again?: Want to perform another calculation? ('y' or 'yes' to calculate again)
   goodbye: Thank you for calculating!
 es:
   welcome: Bienvenido a la calculadora!
@@ -32,9 +33,10 @@ es:
        3) multiplicar
        4) dividir
   invalid_op: Debe elegir 1, 2, 3 o 4
+  invalid_division: No se puede dividir por cero. Por favor elija una operación diferente.
   interim_msg: computando ahora...
   result: El resultado es...
-  again?: ¿Qué realizar otro calculo? (Y para calcular de nuevo)
+  again?: ¿Qué realizar otro calculo? ('y' o 'yes' para calcular de nuevo)
   goodbye: ¡Gracias por calcular!
 ko:
   welcome: 계산기에 오신 걸 환영합니다!
@@ -51,7 +53,8 @@ ko:
        3) 곱셈
        4) 나눗셈
   invalid_op: 1, 2, 3 또는 4를 선택해야 합니다
+  invalid_division: 0으로 나눌 수 없습니다. 다른 연산을 선택하십시요.
   interim_msg: 계산하는 중...
   result: 결과는...
-  again?: 다른 계산을 수행할 수 있는 방법은 무엇입니까? (다시 계산하면 Y)
+  again?: 다른 계산을 수행할 수 있는 방법은 무엇입니까? (다시 계산하면 'y' 이나 'yes')
   goodbye: 계산해 주셔서 감사합니다!

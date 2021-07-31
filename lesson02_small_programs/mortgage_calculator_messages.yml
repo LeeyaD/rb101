@@ -6,16 +6,20 @@ intro: Let's calculate your mortgage payments!
 loan_amount?: |
   How much is your mortgage? (Please enter a dollar amount without commas or decimals. For example, if your loan amount is $2,500 please write 2500)
 invalid_loan_amt: Please enter a valid loan amount that is greater than 0 and contains no decimals or commas.
-apr?: What is the Annual Percentage Rate(APR)? (You can use decimals here)
+apr?: What is the Annual Percentage Rate(APR)? (You can use decimals here but omit the '%' sign)
 invalid_apr: Please enter a valid APR amount.
 loan_duration?: In months, what is the duration of your loan?
 invalid_loan_duration: Please enter a valid loan duration in months.
 interim_message: Calculating monthly payment amount...
-result: |
-  Mortgage - %{loan_amount}
-  APR - %{apr} 
-  Loan Duration - %{mo_loan_term} months.
+print_loan_amt: "Mortgage: %{loan_amt}"
+print_apr: "APR: %{apr}"
+print_loan_term: "Loan Duration: %{loan_term} months."
+print_monthly_payments: You're monthly payment will be %{mo_pymnt}
+# result: |
+#   Mortgage - %{loan_amt}
+#   APR - %{apr} 
+#   Loan Duration - %{loan_term} months.
 
-  You're monthly payment will be %{monthly_pymnt}
+#   You're monthly payment will be %{mo_pymnt}
 calculate_again?: Would you like to do another calculation? (Y/yes to calculate again)
 thank_you: Thank you for calculating with me, goodbye!

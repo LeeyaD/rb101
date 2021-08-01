@@ -15,11 +15,5 @@ print_loan_amt: "Mortgage: %{loan_amt}"
 print_apr: "APR: %{apr}"
 print_loan_term: "Loan Duration: %{loan_term} months."
 print_monthly_payments: You're monthly payment will be %{mo_pymnt}
-# result: |
-#   Mortgage - %{loan_amt}
-#   APR - %{apr} 
-#   Loan Duration - %{loan_term} months.
-
-#   You're monthly payment will be %{mo_pymnt}
 calculate_again?: Would you like to do another calculation? (Y/yes to calculate again)
 thank_you: Thank you for calculating with me, goodbye!

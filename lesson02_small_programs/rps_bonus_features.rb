@@ -1,6 +1,4 @@
 require 'yaml'
-require 'pry'
-require 'pry-byebug'
 
 MESSAGES = YAML.load_file('rps_messages.yml')
 MOVES = { ro: 'Rock', pa: 'Paper', sc: 'Scissors',
@@ -27,12 +25,17 @@ def simple_prompt(string)
   puts "=> #{string}"
 end
 
+def clear_screen
+  system 'clear'
+end
+
 def return_to_continue
   puts ""
   puts "Press 'enter' to continue"
   gets
-  system 'clear'
+  clear_screen
 end
+
 def welcome_sequence
   prompt('welcome')
   prompt('game_play')
@@ -58,7 +61,7 @@ def computer_chooses
 end
 
 def display_choices(player, computer)
-  system 'clear'
+  clear_screen
   puts "=> You chose: #{MOVES[player]} | Computer chose: #{MOVES[computer]}"
 end
 
@@ -116,7 +119,7 @@ def play_again?
   VALID_YES.include?(answer)
 end
 
-system 'clear'
+clear_screen
 welcome_sequence
 
 loop do
@@ -126,13 +129,13 @@ loop do
   display_choices(player_choice, computer_choice)
   sleep 2
   display_results(player_choice, computer_choice)
-  sleep 2
+  sleep 1
   update_score(scoreboard, player_choice, computer_choice)
   display_score(scoreboard)
   sleep 1
   grand_winner_sequence(scoreboard)
   break unless play_again?
-  system 'clear'
+  clear_screen
 end
 
 simple_prompt('Thank you for playing, goodbye!')

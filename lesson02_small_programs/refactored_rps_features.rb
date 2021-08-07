@@ -1,6 +1,4 @@
 require 'yaml'
-require 'pry'
-require 'pry-byebug'
 
 MESSAGES = YAML.load_file('rps_messages.yml')
 CHOICES = {
@@ -12,7 +10,7 @@ CHOICES = {
 }
 VALID_YES = %w(y yes)
 VALID_NO = %w(n no)
-WINS = 2
+wins = [0]
 scoreboard = { player: 0, computer: 0 }
 
 def list_of_choices
@@ -45,22 +43,38 @@ def return_to_continue
   clear_screen
 end
 
-def show_game_play
+def show_game_rules
   clear_screen
-  prompt('game_play')
+  prompt('game_rules')
   return_to_continue
 end
 
-def show_game_play?
+def show_game_rules?
   simple_prompt('Would you like to see the game rules?')
   simple_prompt('Press y/yes to see them')
   answer = gets.chomp.strip.downcase
   VALID_YES.include?(answer)
 end
 
-def welcome_sequence
+def valid_input?(input)
+  (input.to_i.to_s == input) && (input.to_i > 0)
+end
+
+def how_many_wins?(wins_needed)
+  answer = ""
+  loop do
+    simple_prompt('How many wins needed to declare a Grand Winner?')
+    answer = gets.chomp.strip
+    break if valid_input?(answer)
+    simple_prompt('Please enter a number greater than 0')
+  end
+  wins_needed[0] = answer.to_i
+end
+
+def welcome_sequence(wins_needed)
   prompt('welcome')
-  show_game_play if show_game_play?
+  show_game_rules if show_game_rules?
+  how_many_wins?(wins_needed)
 end
 
 def valid_move?(move)
@@ -91,7 +105,8 @@ end
 
 def display_choices(player, computer)
   clear_screen
-  puts "=> You chose: #{show_move(player)} | Computer chose: #{show_move(computer)}"
+  puts "=> You chose: #{show_move(player)} |" \
+       " Computer chose: #{show_move(computer)}"
 end
 
 def win?(first, second)
@@ -124,20 +139,20 @@ def reset_score(score)
   score.each_key { |key| score[key] = 0 }
 end
 
-def find_grand_winner(score)
-  score.key(WINS)
+def find_grand_winner(score, win)
+  score.key(win[0])
 end
 
-def display_winner(grand_winner)
+def display_winner(grand_winner, win)
   winner = grand_winner.to_s.capitalize
   puts ""
-  simple_prompt("#{winner} won #{WINS} times and is the grand winner!")
+  simple_prompt("#{winner} won #{win[0]} times and is the grand winner!")
 end
 
-def grand_winner_sequence(score)
-  grand_winner = find_grand_winner(score)
+def grand_winner_sequence(score, win)
+  grand_winner = find_grand_winner(score, win)
   if grand_winner
-    display_winner(grand_winner)
+    display_winner(grand_winner, win)
     reset_score(score)
   end
 end
@@ -148,15 +163,15 @@ def play_again?
   loop do
     simple_prompt('Do you want to play again? (y/yes or n/no to exit)')
     answer = gets.chomp.strip.downcase
-  
+
     break if VALID_YES.include?(answer) || VALID_NO.include?(answer)
     simple_prompt("I'm sorry that's not a valid response. Try again.")
   end
-  VALID_YES.include?(answer) ? true : false
+  VALID_YES.include?(answer)
 end
 
 clear_screen
-welcome_sequence
+welcome_sequence(wins)
 clear_screen
 
 loop do
@@ -170,24 +185,9 @@ loop do
   update_score(scoreboard, player_choice, computer_choice)
   display_score(scoreboard)
   sleep 1
-  grand_winner_sequence(scoreboard)
+  grand_winner_sequence(scoreboard, wins)
   break unless play_again?
   clear_screen
 end
 
 simple_prompt('Thank you for playing, goodbye!')
-# You could turn this game into a tournament, where the player that wins N rounds is the overall champion.
-# APPROACH
-# 1. 
-
-# ADD WHEN SUBMITTING CODE REVIEW
-# Hi Mia!
-
-# I actually changed my mind and would like a review of my refactored code for this assignment. Let me know if I should create a new 'Code Review' request and I will, otherwise I'll just link it below.
-
-# I actually like being able to type shorthand so I left that but I did all of your other corrections & suggestions
-# - asking player if you want to read the rules (`#show_game_play?` and `#show_game_play` on lines 57 & 63)
-# - making my input validation stricter; handling whitespace and only allowing the user to type 'n/no' to exit the program
-# - making separate methods for listing the choices (formerly: `MOVES.valus.join(', ')` and the `if` conditional I originally that validated user input (formerly: `MOVES.keys.include?(choice)')
-# - using `#each_key` instead of `MOVES.keys.each` in `#reset_score`
-# - I did combine `WINNING_MOVES` and `MOVES` in one hash, that was interesting!

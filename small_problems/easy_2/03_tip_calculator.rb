@@ -15,8 +15,8 @@ percentage = gets.chomp.to_f
 tip = (percentage / 100) * bill
 total = tip + bill
 
-puts "The tip is $#{tip}"
-puts "The total is $#{total}"
+puts "The tip is $#{format("%.2f", tip)}"
+puts "The total is $#{format("%.2f", total)}"
 
 # Further Exploration
 # Our solution prints the results as $30.0 and $230.0 instead of the more usual $30.00 and $230.00. Modify your solution so it always prints the results with 2 decimal places.

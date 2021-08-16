@@ -6,24 +6,44 @@
 # pay attention to how many characters there are, 1000's, 100's, 10's, 1's placements
 # => ['4', '3', '2', '1']
 
-def string_to_integer(string)
-  str_digits = '0123456789'
-  str_arr = string.chars
-  array = []
-  str_arr.each do |char|
-    array << str_digits.index(char)
-  end
-  return array[0] if array.size == 1
-  results_array = []
-  array.reverse.each_with_index do |num, idx|
+def convert_digits_to_numbers(digits, final_array)
+  digits.reverse.each_with_index do |num, idx|
     if idx == 0
-      results_array.unshift(num)
+      final_array.unshift(num)
     else
-      results_array.unshift(num * (10 ** (idx)))
+      final_array.unshift(num * (10 ** (idx)))
     end
   end
+end
 
-  results_array.sum
+def convert_string_to_digits(string, str_digits)
+  string.chars.map do |char|
+    str_digits.index(char)
+  end
+end
+
+def one_digit?(array)
+  array.size == 1
+end
+
+def digits_to_numbers(digits)
+  index = 0
+  digits.reverse.each_with_object([]) do |num, array|
+    if index == 0
+      array.unshift(num)
+    else
+      array.unshift(num * (10 ** (index)))
+    end
+    index += 1
+  end
+end
+
+def string_to_integer(string)
+  str_digits = '0123456789'
+  array = convert_string_to_digits(string, str_digits)
+
+  return array[0] if one_digit?(array)
+  digits_to_numbers(array).sum
 end
 
 p string_to_integer('4321') == 4321

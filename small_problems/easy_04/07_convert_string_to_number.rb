@@ -6,16 +6,6 @@
 # pay attention to how many characters there are, 1000's, 100's, 10's, 1's placements
 # => ['4', '3', '2', '1']
 
-def convert_digits_to_numbers(digits, final_array)
-  digits.reverse.each_with_index do |num, idx|
-    if idx == 0
-      final_array.unshift(num)
-    else
-      final_array.unshift(num * (10 ** (idx)))
-    end
-  end
-end
-
 def convert_string_to_digits(string, str_digits)
   string.chars.map do |char|
     str_digits.index(char)
@@ -49,3 +39,11 @@ end
 p string_to_integer('4321') == 4321
 p string_to_integer('0') == 0
 p string_to_integer('570') == 570
+
+# FURTHER EXPLORATION
+# Write a hexadecimal_to_integer method that converts a string representing a hexadecimal number to its integer value.
+
+def hexadecimal_to_integer(string)
+  string.hex
+end
+p hexadecimal_to_integer('4D9f') == 19871

@@ -3,9 +3,12 @@
 # You may assume that every word contains at least one letter, and that the string will always contain at least one word. You may also assume that each string contains nothing but words and spaces
 
 def swap(string)
-  string.split.each do |word|
+  str_array = string.split
+  str_array.each do |word|
     word[0], word[-1] = word[-1], word[0]
-  end.join(" ")
+  end
+  
+  str_array.join(" ")
 end
 
 puts swap('Oh what a wonderful day it is') == 'hO thaw a londerfuw yad ti si'

@@ -35,13 +35,14 @@
 # - - -DETERMINE hour & minutes
 # -- -- 
 # 5. RETURN an interpolated string with the hour & minutes formated w/ Kernel#format
-
+MINUTES_PER_DAY = 1440
+MINUTES_PER_HOUR = 60
 
 def time_of_day(minutes)
-  minutes = 1440 + (minutes) if minutes < 0
-  
-  days, minutes = minutes.divmod(1440)
-  hours, min = minutes.divmod(60)
+  minutes += MINUTES_PER_DAY if minutes < 0
+
+  days, minutes = minutes.divmod(MINUTES_PER_DAY)
+  hours, min = minutes.divmod(MINUTES_PER_HOUR)
 
   "#{format("%02d", hours)}:#{format("%02d", min)}"
 end

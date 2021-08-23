@@ -34,6 +34,25 @@ def initialize_board
   new_board
 end
 
+def who_goes_first_prompt
+  system 'clear'
+  answer = nil
+
+  loop do
+    prompt "Who should go first? ('1' for you or '2' for the Computer)"
+    answer = gets.chomp
+    break if %w(1 2).include?(answer)
+    prompt "That's not a valid choice. '1' or '2' please."
+  end
+
+  answer
+end
+
+def who_goes_first?
+  answer = who_goes_first_prompt
+  answer == '1' ? 'Player' : 'Computer'
+end
+
 def empty_squares(brd)
   brd.keys.select { |sq| brd[sq] == INITIAL_MARKER }
 end
@@ -69,9 +88,57 @@ def player_places_piece!(brd)
   brd[square] = PLAYER_MARKER
 end
 
+def detect_strategic_move(brd, marker)
+  move = WINNING_LINES.select do |line|
+    brd.values_at(*line).count(marker) == 2 &&
+      brd.values_at(*line).count(INITIAL_MARKER) == 1
+  end
+
+  move.empty? ? nil : move.sample
+end
+
+def move(brd, square)
+  square.each do |sq|
+    return sq if brd[sq] == INITIAL_MARKER
+  end
+end
+
+def square_5_free?(brd)
+  brd[5] == INITIAL_MARKER
+end
+
 def computer_places_piece!(brd)
-  square = empty_squares(brd).sample
+  attack = detect_strategic_move(brd, COMPUTER_MARKER)
+  threat = detect_strategic_move(brd, PLAYER_MARKER)
+
+  if attack
+    square = move(brd, attack)
+  elsif threat
+    square = move(brd, threat)
+  elsif square_5_free?(brd)
+    square = 5
+  else
+    square = empty_squares(brd).sample
+  end
+
   brd[square] = COMPUTER_MARKER
+end
+
+def place_piece!(brd, player)
+  case player
+  when 'Player'
+    player_places_piece!(brd)
+  when 'Computer'
+    computer_places_piece!(brd)
+  end
+end
+
+def alternate_player(player)
+  if player == 'Player'
+    return 'Computer'
+  else
+    'Player'
+  end
 end
 
 def board_full?(brd)
@@ -103,8 +170,13 @@ def display_score(score)
   prompt "Player: #{score['Player']} | Computer: #{score['Computer']}"
 end
 
-def detect_grand_winner(scoreboard, wins)
-  scoreboard.values.include?(wins)
+def score_sequence(winner, score)
+  update_score(winner, score) if winner
+  display_score(score)
+end
+
+def detect_grand_winner(score, wins)
+  score.values.include?(wins)
 end
 
 def display_grand_winner(score, wins)
@@ -113,16 +185,31 @@ def display_grand_winner(score, wins)
   puts ""
 end
 
+def grand_winner_sequence(score, wins)
+  grand_winner = detect_grand_winner(score, wins)
+  display_grand_winner(score, wins) if grand_winner
+  reset_score(score) if grand_winner
+end
+
+def reset_score(score)
+  score.each_key { |k| score[k] = 0 }
+end
+
+def play_again?
+  prompt "Play again? (y/n)"
+  answer = gets.chomp
+  answer.downcase.start_with?('y')
+end
+
+
 loop do
   board = initialize_board
-
+  current_player = who_goes_first?
   loop do
     display_board(board)
 
-    player_places_piece!(board)
-    break if someone_won?(board) || board_full?(board)
-
-    computer_places_piece!(board)
+    place_piece!(board, current_player)
+    current_player = alternate_player(current_player)
     break if someone_won?(board) || board_full?(board)
   end
 
@@ -135,15 +222,10 @@ loop do
     prompt "It's a tie!"
   end
 
-  update_score(winner, scoreboard) if winner
-  display_score(scoreboard)
+  score_sequence(winner, scoreboard)
+  grand_winner_sequence(scoreboard, wins)
 
-  grand_winner = detect_grand_winner(scoreboard, wins)
-  display_grand_winner(scoreboard, wins) if grand_winner
-
-  prompt "Play again? (y/n)"
-  answer = gets.chomp
-  break unless answer.downcase.start_with?('y')
+  break unless play_again?
 end
 
 prompt "Thanks for playing Tic-Tac-Toe! Goodbye!"

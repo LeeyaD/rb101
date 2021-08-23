@@ -34,25 +34,6 @@ def initialize_board
   new_board
 end
 
-def who_goes_first_prompt
-  system 'clear'
-  answer = nil
-
-  loop do
-    prompt "Who should go first? ('1' for you or '2' for the Computer)"
-    answer = gets.chomp
-    break if %w(1 2).include?(answer)
-    prompt "That's not a valid choice. '1' or '2' please."
-  end
-
-  answer
-end
-
-def who_goes_first?
-  answer = who_goes_first_prompt
-  answer == '1' ? 'Player' : 'Computer'
-end
-
 def empty_squares(brd)
   brd.keys.select { |sq| brd[sq] == INITIAL_MARKER }
 end
@@ -73,6 +54,53 @@ def joinor(array, delimiter= ', ', joining_word= 'or')
   when 2 then joined_string.gsub(',', " #{joining_word}")
   else joined_string.insert(-3, " #{joining_word}")
   end
+end
+
+def who_goes_first_sequence
+  chooser = who_chooses_first_player?
+  first_player = choose_first_player(chooser)
+  prompt "#{first_player} gets to go first!"
+  sleep 2
+  first_player
+end
+
+def choose_first_player(chooser)
+  if chooser == 'Player'
+    player_chooses_first_player
+  else
+    computer_chooses_first_player
+  end
+end
+
+def who_chooses_first_player?
+  system 'clear'
+  answer = nil
+  loop do
+    prompt "Who decides who goes first? ('1' for you or '2' for the Computer)"
+    answer = gets.chomp
+    break if %w(1 2).include?(answer)
+    prompt "That's not a valid choice. '1' or '2' please."
+  end
+
+  answer == '1' ? 'Player' : 'Computer'
+end
+
+def player_chooses_first_player
+  system 'clear'
+  answer = nil
+
+  loop do
+    prompt "Who should go first? ('1' for you or '2' for the Computer)"
+    answer = gets.chomp
+    break if %w(1 2).include?(answer)
+    prompt "That's not a valid choice. '1' or '2' please."
+  end
+
+  answer == '1' ? 'Player' : 'Computer'
+end
+
+def computer_chooses_first_player
+  %w(Player Computer).sample
 end
 
 def player_places_piece!(brd)
@@ -196,6 +224,7 @@ def reset_score(score)
 end
 
 def play_again?
+  puts ""
   prompt "Play again? (y/n)"
   answer = gets.chomp
   answer.downcase.start_with?('y')
@@ -204,10 +233,10 @@ end
 
 loop do
   board = initialize_board
-  current_player = who_goes_first?
+  current_player = who_goes_first_sequence
+
   loop do
     display_board(board)
-
     place_piece!(board, current_player)
     current_player = alternate_player(current_player)
     break if someone_won?(board) || board_full?(board)

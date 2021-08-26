@@ -126,12 +126,12 @@ def player_places_piece!(brd)
   square = ''
   loop do
     prompt "Choose a square, your options are #{joinor(empty_squares(brd))}:"
-    square = gets.chomp.strip.to_i
+    square = gets.chomp.strip.to_f
     break if empty_squares(brd).include?(square)
     yml_prompt 'invalid_square'
   end
 
-  brd[square] = PLAYER_MARKER
+  brd[square.to_i] = PLAYER_MARKER
 end
 
 def detect_strategic_move(brd, marker)

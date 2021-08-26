@@ -9,6 +9,7 @@ WINNING_LINES = [
 INITIAL_MARKER = ' '
 PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
+MIDDLE_SQUARE = 5
 VALID_YES = %w(y yes)
 VALID_OPTION = %w(1 2)
 WINS = 2
@@ -155,7 +156,7 @@ def move(brd, square)
 end
 
 def square_5_free?(brd)
-  brd[5] == INITIAL_MARKER
+  brd[MIDDLE_SQUARE] == INITIAL_MARKER
 end
 
 def computer_places_piece!(brd)
@@ -167,7 +168,7 @@ def computer_places_piece!(brd)
            elsif threat
              move(brd, threat)
            elsif square_5_free?(brd)
-             5
+             MIDDLE_SQUARE
            else
              empty_squares(brd).sample
            end
@@ -253,7 +254,7 @@ end
 
 def show_rules?
   yml_prompt 'show_rules?'
-  answer = gets.chomp.strip
+  answer = gets.chomp.strip.downcase
   VALID_YES.include?(answer)
 end
 

@@ -36,21 +36,24 @@ def degrees(arr, string)
 end
 
 def minutes(arr, string)
-  binding.pry
   if arr.empty?
     string << "00'"
   else
-    arr = ((arr[0].to_i * 0.01) * 60).to_s.split(".")
-    string << format("%0.2d", arr.shift) + "'"
+    arr[0].insert(0, "0.")
+    # binding.pry
+    (arr[0].to_f * 60).to_s.split(".")
+    string << format("%0.2d", (arr.shift).to_i + "'")
   end
-  # p string
+  arr
 end
 
 def dms(angle)
   result = ""
   array = angle.to_s.split(".")
   degrees(array, result)
-  minutes(array, result)
+  array = minutes(array, result)
+  p array
+  p result
 end
 
 # puts dms(30) #== %(30°00'00")

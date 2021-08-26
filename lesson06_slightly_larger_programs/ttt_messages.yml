@@ -18,5 +18,5 @@ computer_choosing: Computer is deciding who goes first...
 who_goes_first: "Who should go first? ('1' for you or '2' for the Computer)"
 invalid_1_2_choice: "That's not a valid choice. '1' or '2' please."
 invalid_square: "Sorry, that's not a valid choice. Enter a value 1-9."
-play_again?: Play again? (y/yes or any key to exit program)
+play_again?: To play again, press 'y' or 'enter'. To exit, press any other key.
 goodbye: Thanks for playing Tic-Tac-Toe! Goodbye!

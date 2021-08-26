@@ -1,4 +1,5 @@
 require 'yaml'
+require 'io/console'
 
 MESSAGES = YAML.load_file('ttt_messages.yml')
 WINNING_LINES = [
@@ -244,8 +245,8 @@ def play_again?
   sleep 1
   puts ""
   yml_prompt 'play_again?'
-  answer = gets.chomp.strip.downcase
-  VALID_YES.include?(answer)
+  answer = STDIN.getch.downcase
+  VALID_YES.include?(answer) || answer == "\r"
 end
 
 def show_rules?

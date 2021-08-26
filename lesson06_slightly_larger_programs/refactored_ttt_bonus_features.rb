@@ -11,7 +11,7 @@ PLAYER_MARKER = 'X'
 COMPUTER_MARKER = 'O'
 VALID_YES = %w(y yes)
 VALID_OPTION = %w(1 2)
-wins = 2
+WINS = 2
 scoreboard = { "Player" => 0, "Computer" => 0 }
 
 def messages(message)
@@ -223,19 +223,19 @@ def update_and_display_score(winner, score)
   display_score(score)
 end
 
-def detect_grand_winner(score, wins)
-  score.values.include?(wins)
+def detect_grand_winner(score)
+  score.values.include?(WINS)
 end
 
-def display_grand_winner(score, wins)
+def display_grand_winner(score)
   puts ""
-  prompt "#{score.key(wins)} has won the game with a total of #{wins} wins!"
+  prompt "#{score.key(WINS)} has won the game with a total of #{WINS} wins!"
   puts ""
 end
 
-def grand_winner_sequence(score, wins)
-  grand_winner = detect_grand_winner(score, wins)
-  display_grand_winner(score, wins) if grand_winner
+def grand_winner_sequence(score)
+  grand_winner = detect_grand_winner(score)
+  display_grand_winner(score) if grand_winner
   reset_score(score) if grand_winner
 end
 
@@ -301,7 +301,7 @@ loop do
   winner = display_gameplay_outcome(board)
 
   update_and_display_score(winner, scoreboard)
-  grand_winner_sequence(scoreboard, wins)
+  grand_winner_sequence(scoreboard)
 
   break unless play_again?
 end

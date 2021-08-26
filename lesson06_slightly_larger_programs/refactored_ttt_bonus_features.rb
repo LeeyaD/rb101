@@ -41,14 +41,22 @@ end
 
 def display_board(brd)
   clear_screen
-  puts "You're #{PLAYER_MARKER}. Computer is #{COMPUTER_MARKER}."
-  puts ""
-  puts " #{brd[1]} | #{brd[2]} | #{brd[3]}"
-  puts "---+---+---"
-  puts " #{brd[4]} | #{brd[5]} | #{brd[6]}"
-  puts "---+---+---"
-  puts " #{brd[7]} | #{brd[8]} | #{brd[9]}"
-  puts ""
+  puts <<-MSG
+  You're #{PLAYER_MARKER}. Computer is #{COMPUTER_MARKER}.
+  
+         |     |
+     #{brd[1]}   |  #{brd[2]}  |  #{brd[3]}
+         |     |
+    -----+-----+-----
+         |     |
+     #{brd[4]}   |  #{brd[5]}  |  #{brd[6]}
+         |     |
+    -----+-----+-----
+         |     |
+     #{brd[7]}   |  #{brd[8]}  |  #{brd[9]}
+         |     |
+  
+  MSG
 end
 
 def initialize_board

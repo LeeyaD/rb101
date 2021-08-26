@@ -88,7 +88,7 @@ def joinor(array, delimiter= ', ', joining_word= 'or')
 end
 
 def who_goes_first_sequence
-  chooser = who_chooses_first_player
+  chooser = choosing_first_player('who_chooses')
   first_player = choose_first_player(chooser)
   prompt "#{first_player} gets to go first!"
   sleep 2
@@ -97,32 +97,18 @@ end
 
 def choose_first_player(chooser)
   if chooser == 'Player'
-    player_chooses_first_player
+    choosing_first_player('who_goes_first')
   else
     computer_chooses_first_player
   end
 end
 
-def who_chooses_first_player
+def choosing_first_player(keyword)
   clear_screen
   answer = nil
   loop do
-    yml_prompt 'who_chooses'
+    yml_prompt keyword
     answer = gets.chomp.strip.downcase
-    break if VALID_OPTION.include?(answer)
-    yml_prompt 'invalid_1_2_choice'
-  end
-
-  answer == '1' ? 'Player' : 'Computer'
-end
-
-def player_chooses_first_player
-  clear_screen
-  answer = nil
-
-  loop do
-    yml_prompt 'who_goes_first'
-    answer = gets.chomp.strip
     break if VALID_OPTION.include?(answer)
     yml_prompt 'invalid_1_2_choice'
   end

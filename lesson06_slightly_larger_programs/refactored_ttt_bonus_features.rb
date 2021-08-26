@@ -80,7 +80,7 @@ def joinor(array, delimiter= ', ', joining_word= 'or')
 end
 
 def who_goes_first_sequence
-  chooser = who_chooses_first_player?
+  chooser = who_chooses_first_player
   first_player = choose_first_player(chooser)
   prompt "#{first_player} gets to go first!"
   sleep 2
@@ -95,7 +95,7 @@ def choose_first_player(chooser)
   end
 end
 
-def who_chooses_first_player?
+def who_chooses_first_player
   clear_screen
   answer = nil
   loop do
@@ -236,8 +236,10 @@ end
 
 def grand_winner_sequence(score)
   grand_winner = detect_grand_winner(score)
-  display_grand_winner(score) if grand_winner
-  reset_score(score) if grand_winner
+  if grand_winner
+    display_grand_winner(score)
+    reset_score(score)
+  end
 end
 
 def reset_score(score)

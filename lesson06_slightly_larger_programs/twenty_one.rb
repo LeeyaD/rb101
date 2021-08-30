@@ -135,17 +135,27 @@ def display_hand(hand)
   new_line
 end
 
+def stay?(answer)
+  answer == VALID_STAY
+end
+
+def hit?(answer)
+  answer == VALID_HIT
+end
+
 def player_turn(deck, players_hand)
   answer = nil
+
+  # hit_or_stay(deck, players_hand)
+  # => 
   loop do
     display_hand(players_hand)
     yml_prompt('hit_or_stay?')
     answer = gets.chomp.strip.downcase
-    # binding.pry
-    break if answer == VALID_STAY
-    hit(deck, players_hand) if answer == VALID_HIT
+    break if stay?(answer)
+    hit(deck, players_hand) if hit?(answer)
     break if busted?(players_hand)
-    yml_prompt('valid_hit_or_stay')
+    yml_prompt('valid_hit_or_stay') if !hit?(answer)
   end
 
   if busted?(players_hand)
@@ -178,6 +188,16 @@ def dealer_turn(deck, dealers_hand)
   end
 end
 
+def compare_hands(player, dealer)
+  if total(player) > total(dealer)
+    "Player"
+  elsif total(dealer) > total(player)
+    "Dealer"
+  else
+    nil
+  end
+end
+
 def play_again?
   new_line
   yml_prompt('play_again?')
@@ -204,7 +224,8 @@ loop do
   
   player_turn(deck, players_hand)
   dealer_turn(deck, dealers_hand)
-  puts "time to compare cards!"
+  winner = compare_hands(players_hand, dealers_hand)
+  p winner
   break unless play_again?
 end
 

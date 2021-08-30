@@ -1,5 +1,4 @@
 FIX
-1. Make #player_turn answers more intentional, ONLY 'h' or 's' is valid
 2. Define #compare_hands
 3. Define #declare_winner
 4. What methods are nearly identical that can be combined & made more flexible?

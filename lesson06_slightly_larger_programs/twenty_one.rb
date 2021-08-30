@@ -11,6 +11,8 @@ FACE_CARDS = {
   "K" => "King", "A" => "Ace"
 }
 VALID_YES = %w(y yes)
+VALID_STAY = "s"
+VALID_HIT = "h"
 # players_hand = []
 # dealers_hand = []
 current_player = "Player"
@@ -138,11 +140,12 @@ def player_turn(deck, players_hand)
   loop do
     display_hand(players_hand)
     yml_prompt('hit_or_stay?')
-    # binding.pry
     answer = gets.chomp.strip.downcase
-    break if answer == 's'
-    hit(deck, players_hand)
+    # binding.pry
+    break if answer == VALID_STAY
+    hit(deck, players_hand) if answer == VALID_HIT
     break if busted?(players_hand)
+    yml_prompt('valid_hit_or_stay')
   end
 
   if busted?(players_hand)

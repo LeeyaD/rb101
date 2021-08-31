@@ -53,8 +53,8 @@ end
 
 def show_rules?
   yml_prompt('rules?')
-  answer = gets.chomp.strip.downcase
-  VALID_YES.include?(answer)
+  answer = STDIN.getch.downcase
+  VALID_YES.include?(answer) || answer == "\r"
 end
 
 def show_rules
@@ -78,6 +78,7 @@ def deal_cards(deck, cards)
 end
 
 def deal_first_2_cards(deck, player, dealer)
+  clear_screen
   prompt('Dealing first two cards...')
   deal_cards(deck, player)
   deal_cards(deck, dealer)
@@ -86,6 +87,7 @@ end
 def show_players_cards(player)
   new_line
   prompt('You have in your hand:')
+  sleep 0.5
   player.each do |card|
     suit = card[0].capitalize
     value = card[1]
@@ -95,12 +97,14 @@ def show_players_cards(player)
     else
       prompt("#{value} of #{suit}")
     end
+    sleep 0.5
   end
 end
 
 def show_dealers_cards(dealer)
   new_line
   prompt('Dealer has:')
+  sleep 0.5
   dealer.each_with_index do |card, idx|
     suit = card[0].capitalize
     value = card[1]
@@ -115,13 +119,14 @@ def show_dealers_cards(dealer)
     else
       prompt("#{value} of #{suit}")
     end
+    sleep 0.5
   end
 end
 
 def hit(deck, player)
+  clear_screen
   prompt('Dealing new card...')
   sleep 1
-  clear_screen
   deal_cards(deck, player)
   sleep 1
 end
@@ -131,7 +136,7 @@ def player_turn(deck, player)
   loop do
     new_line
     yml_prompt('hit_or_stay?')
-    answer = gets.chomp.strip.downcase
+    answer = STDIN.getch.downcase
     if answer == 'h'
       hit(deck, player) if answer == 'h'
       show_players_cards(player)
@@ -237,7 +242,7 @@ def reset_hands(player, dealer)
   reset(dealer)
 end
 
-# welcome_sequence
+welcome_sequence
 
 loop do
   deck = initialize_deck

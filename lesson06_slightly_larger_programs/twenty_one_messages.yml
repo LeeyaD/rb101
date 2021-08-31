@@ -1,5 +1,5 @@
 welcome: Welome to Twenty-One!
-rules?: Would you like to the rules? (y/yes to see them and any key or 'enter' to skip them)
+rules?: Would you like to the rules? ('y' or 'enter' to see them, otherwise any key to skip them)
 rules: |
   OBJECTIVE
   - Beat the dealer by getting a count as close to 21 as possible, without going over 21.
@@ -15,5 +15,5 @@ rules: |
 hit_or_stay?: Would you like to 'hit' (h) or 'stay' (s)?
 valid_hit_or_stay: That's not a valid answer. Enter 'h' to hit or 's' to stay.
 
-play_again?: Do you want to play again? ('y' or 'enter' to play again, otherwise, any key to exit)
+play_again?: Do you want to play again? ('y' or 'enter' to play again, otherwise any key to exit)
 goodbye: Thank you for playing. Goodbye!

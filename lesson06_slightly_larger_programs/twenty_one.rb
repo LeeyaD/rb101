@@ -11,11 +11,6 @@ FACE_CARDS = {
   "K" => "King", "A" => "Ace"
 }
 VALID_YES = %w(y yes)
-VALID_STAY = "s"
-VALID_HIT = "h"
-# players_hand = []
-# dealers_hand = []
-current_player = "Player"
 
 def initialize_deck
   SUITS.product(CARDS)
@@ -41,7 +36,7 @@ def return_to_continue
 end
 
 def prompt(message)
-  puts "#{message}"
+  puts "=> #{message}"
 end
 
 def yml_prompt(yml_key)
@@ -82,7 +77,7 @@ def deal_cards(deck, hand)
   end
 end
 
-def deal_initial_cards(deck, players_hand, dealers_hand)
+def deal_2_cards(deck, players_hand, dealers_hand)
   deal_cards(deck, players_hand)
   deal_cards(deck, dealers_hand)
 end
@@ -108,96 +103,6 @@ def total(cards)
   sum
 end
 
-def hit(deck, hand)
-  deal_cards(deck, hand)
-end
-
-def busted?(hand)
-  total(hand) > 21
-end
-
-def display_hand(hand)
-  new_line
-  puts "Hand:"
-
-  hand.each do |card|
-    sleep 0.5
-    if FACE_CARDS.include?(card[1])
-      puts "#{FACE_CARDS[card[1]]} of #{card[0].capitalize}"
-    else
-      puts "#{card[1]} of #{card[0].capitalize}"
-    end
-  end
-
-  sleep 1
-  new_line
-  puts "Total value of hand is #{total(hand)}"
-  new_line
-end
-
-def stay?(answer)
-  answer == VALID_STAY
-end
-
-def hit?(answer)
-  answer == VALID_HIT
-end
-
-def player_turn(deck, players_hand)
-  answer = nil
-
-  # hit_or_stay(deck, players_hand)
-  # => 
-  loop do
-    display_hand(players_hand)
-    yml_prompt('hit_or_stay?')
-    answer = gets.chomp.strip.downcase
-    break if stay?(answer)
-    hit(deck, players_hand) if hit?(answer)
-    break if busted?(players_hand)
-    yml_prompt('valid_hit_or_stay') if !hit?(answer)
-  end
-
-  if busted?(players_hand)
-    new_line
-    puts "Oh no, you're over 21 with #{total(players_hand)}!"
-    puts "Dealer wins!"
-  else
-    puts "You chose to stay at #{total(players_hand)}!"
-  end
-end
-
-def dealer_turn(deck, dealers_hand)
-  loop do
-    display_hand(dealers_hand)
-    if total(dealers_hand) <= 16
-      new_line
-      puts "Dealer will hit..."
-      sleep 1
-      hit(deck, dealers_hand)
-    end
-    break if busted?(dealers_hand) || (total(dealers_hand) >=17)
-  end
-
-  if busted?(dealers_hand)
-    new_line
-    puts "Dealer is over 21 with #{total(dealers_hand)}!"
-    puts "Player wins!"
-  else
-    puts "Dealer chose to stay at #{total(dealers_hand)}!"
-  end
-end
-
-def compare_hands(player, dealer)
-  if total(player) > total(dealer)
-    "Player"
-  elsif total(dealer) > total(player)
-    "Dealer"
-  else
-    nil
-  end
-end
-
 def play_again?
   new_line
   yml_prompt('play_again?')
@@ -219,14 +124,8 @@ end
 loop do
   deck = initialize_deck
   players_hand, dealers_hand = initialize_hands
-  deal_initial_cards(deck, players_hand, dealers_hand)
-  # display_table(players_hand, dealers_hand)
-  
-  player_turn(deck, players_hand)
-  dealer_turn(deck, dealers_hand)
-  winner = compare_hands(players_hand, dealers_hand)
-  p winner
-  break unless play_again?
+  deal_2_cards(deck, players_hand, dealers_hand)
+
 end
 
 new_line

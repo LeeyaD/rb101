@@ -77,7 +77,7 @@ def deal_cards(deck, hand)
   end
 end
 
-def deal_2_cards(deck, player, dealer)
+def deal_first_2_cards(deck, player, dealer)
   prompt('Dealing first two cards...')
   deal_cards(deck, player)
   deal_cards(deck, dealer)
@@ -115,6 +115,22 @@ def show_dealers_cards(dealer)
     else
       prompt("#{value} of #{suit}")
     end
+  end
+end
+
+def player_turn(player)
+  answer = nil
+  loop do
+    yml_prompt('hit_or_stay?')
+    answer = gets.chomp.strip.downcase
+    break if answer == 's' || busted?
+  end
+
+  if busted?
+    prompt("You busted with #{total(player)}!")
+    # end the game? ask the user to play again?
+  else
+    prompt('You chose to stay!')
   end
 end
 
@@ -160,11 +176,18 @@ end
 loop do
   deck = initialize_deck
   player, dealer = initialize_hands
-  deal_2_cards(deck, player, dealer)
+  deal_first_2_cards(deck, player, dealer)
+  sleep 1
   show_players_cards(player)
   show_dealers_cards(dealer)
+  sleep 1
+  player_turn(player)
+  # dealer_turn(dealer)
+
   break unless play_again?
 end
 
 new_line
 yml_prompt('goodbye')
+
+

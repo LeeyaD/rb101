@@ -68,12 +68,12 @@ def welcome_sequence
   show_rules if show_rules? 
 end
 
-def deal_cards(deck, hand)
+def deal_cards(deck, cards)
   deck.shuffle!
-  if hand.empty?
-    2.times { |_| hand << deck.shift }
+  if cards.empty?
+    2.times { |_| cards << deck.shift }
   else
-    hand << deck.shift
+    cards << deck.shift
   end
 end
 
@@ -121,6 +121,7 @@ end
 def player_turn(player)
   answer = nil
   loop do
+    new_line
     yml_prompt('hit_or_stay?')
     answer = gets.chomp.strip.downcase
     break if answer == 's' || busted?
@@ -155,6 +156,10 @@ def total(cards)
   sum
 end
 
+def busted?(cards)
+  total(cards) > 21
+end
+
 def play_again?
   new_line
   yml_prompt('play_again?')
@@ -162,8 +167,8 @@ def play_again?
   VALID_YES.include?(answer) || answer == "\r"
 end
 
-def reset(hand)
-  hand = []
+def reset(cards)
+  cards = []
 end
 
 def reset_hands(player, dealer)

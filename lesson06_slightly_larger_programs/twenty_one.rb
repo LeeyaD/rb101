@@ -77,16 +77,38 @@ def deal_cards(deck, hand)
   end
 end
 
-def deal_2_cards(deck, players_hand, dealers_hand)
-  deal_cards(deck, players_hand)
-  deal_cards(deck, dealers_hand)
+def deal_2_cards(deck, player, dealer)
+  prompt('Dealing first two cards...')
+  deal_cards(deck, player)
+  deal_cards(deck, dealer)
 end
 
-def show_players_cards(players_hand)
+def show_players_cards(player)
+  new_line
   prompt('You have in your hand:')
-  players_hand.each do |card|
+  player.each do |card|
     suit = card[0].capitalize
     value = card[1]
+
+    if value.to_i == 0
+      prompt("#{FACE_CARDS[value]} of #{suit}")
+    else
+      prompt("#{value} of #{suit}")
+    end
+  end
+end
+
+def show_dealers_cards(dealer)
+  new_line
+  prompt('Dealer has:')
+  dealer.each_with_index do |card, idx|
+    suit = card[0].capitalize
+    value = card[1]
+
+    if idx == 0
+      prompt('Hidden Card')
+      next
+    end
 
     if value.to_i == 0
       prompt("#{FACE_CARDS[value]} of #{suit}")
@@ -128,19 +150,19 @@ def reset(hand)
   hand = []
 end
 
-def reset_hands(players_hand, dealers_hand)
-  reset(players_hand)
-  reset(dealers_hand)
+def reset_hands(player, dealer)
+  reset(player)
+  reset(dealer)
 end
 
 # welcome_sequence
 
 loop do
   deck = initialize_deck
-  players_hand, dealers_hand = initialize_hands
-  deal_2_cards(deck, players_hand, dealers_hand)
-  show_players_cards(players_hand)
-  p dealers_hand
+  player, dealer = initialize_hands
+  deal_2_cards(deck, player, dealer)
+  show_players_cards(player)
+  show_dealers_cards(dealer)
   break unless play_again?
 end
 

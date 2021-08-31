@@ -82,6 +82,20 @@ def deal_2_cards(deck, players_hand, dealers_hand)
   deal_cards(deck, dealers_hand)
 end
 
+def show_players_cards(players_hand)
+  prompt('You have in your hand:')
+  players_hand.each do |card|
+    suit = card[0].capitalize
+    value = card[1]
+
+    if value.to_i == 0
+      prompt("#{FACE_CARDS[value]} of #{suit}")
+    else
+      prompt("#{value} of #{suit}")
+    end
+  end
+end
+
 def total(cards)
   values = cards.map { |card| card[1] }
 
@@ -125,7 +139,9 @@ loop do
   deck = initialize_deck
   players_hand, dealers_hand = initialize_hands
   deal_2_cards(deck, players_hand, dealers_hand)
-
+  show_players_cards(players_hand)
+  p dealers_hand
+  break unless play_again?
 end
 
 new_line

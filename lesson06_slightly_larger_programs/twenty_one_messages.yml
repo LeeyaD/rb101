@@ -16,4 +16,4 @@ hit_or_stay?: Would you like to 'hit' (h) or 'stay' (s)?
 valid_hit_or_stay: That's not a valid answer. Enter 'h' to hit or 's' to stay.
 
 play_again?: Do you want to play again? ('y' or 'enter' to play again, otherwise, any key to exit)
-goodbye: Thank you for playing!
+goodbye: Thank you for playing. Goodbye!

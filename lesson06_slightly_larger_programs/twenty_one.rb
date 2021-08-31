@@ -118,20 +118,81 @@ def show_dealers_cards(dealer)
   end
 end
 
-def player_turn(player)
+def hit(deck, player)
+  prompt('Dealing new card...')
+  sleep 1
+  clear_screen
+  deal_cards(deck, player)
+  sleep 1
+end
+
+def player_turn(deck, player)
   answer = nil
   loop do
     new_line
     yml_prompt('hit_or_stay?')
     answer = gets.chomp.strip.downcase
-    break if answer == 's' || busted?
+    if answer == 'h'
+      hit(deck, player) if answer == 'h'
+      show_players_cards(player)
+    end
+    break if answer == 's' || busted?(player)
   end
 
-  if busted?
+  if busted?(player)
+    new_line
     prompt("You busted with #{total(player)}!")
-    # end the game? ask the user to play again?
+    prompt("Dealer wins!")
+    return 'Dealer'
   else
+    new_line
     prompt('You chose to stay!')
+    return nil
+  end
+end
+
+def dealer_turn(deck, dealer)
+  new_line
+  prompt("Dealer's turn...")
+  sleep 0.5
+  loop do
+    show_dealers_cards(dealer)
+    break if total(dealer) >= 17 || busted?(dealer)
+    prompt("Dealer chose to hit, dealing cards...")
+    sleep 1
+    hit(deck, dealer)
+  end
+
+  if busted?(dealer)
+    new_line
+    prompt("Dealer busted with #{total(dealer)}")
+    prompt("You win!")
+    return 'Player'
+  else
+    new_line
+    prompt("Dealer chose to stay")
+    return nil
+  end
+
+end
+
+def compare_cards(player, dealer)
+  if total(player) > total(dealer)
+    ["Player", player]
+  elsif total(dealer) > total(player)
+    ["Dealer", dealer]
+  else total(dealer) == total(player)
+    nil
+  end
+end
+
+def declare_winner(player, dealer)
+  winner, winning_hand = compare_cards(player, dealer)
+
+  if winner
+    prompt("#{winner} won with #{total(winning_hand)}!")
+  else
+    prompt("It's a draw!")
   end
 end
 
@@ -186,9 +247,9 @@ loop do
   show_players_cards(player)
   show_dealers_cards(dealer)
   sleep 1
-  player_turn(player)
-  # dealer_turn(dealer)
-
+  winner = player_turn(deck, player)
+  winner = dealer_turn(deck, dealer) unless winner
+  declare_winner(player, dealer) unless winner
   break unless play_again?
 end
 

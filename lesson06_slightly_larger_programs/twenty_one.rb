@@ -110,7 +110,7 @@ def show_dealers_cards(dealer)
     value = card[1]
 
     if idx == 0
-      prompt('Hidden Card')
+      prompt('[Hidden Card]')
       next
     end
 
@@ -157,13 +157,15 @@ def player_turn(deck, player)
 end
 
 def dealer_turn(deck, dealer)
-  new_line
+  clear_screen
   prompt("Dealer's turn...")
   sleep 0.5
   loop do
     show_dealers_cards(dealer)
     break if total(dealer) >= 17 || busted?(dealer)
-    prompt("Dealer chose to hit, dealing cards...")
+    new_line
+    prompt("Dealer chose to hit.")
+    return_to_continue
     sleep 1
     hit(deck, dealer)
   end
@@ -175,7 +177,7 @@ def dealer_turn(deck, dealer)
     return 'Player'
   else
     new_line
-    prompt("Dealer chose to stay")
+    prompt("Dealer chose to stay.")
     return nil
   end
 
@@ -193,7 +195,8 @@ end
 
 def declare_winner(player, dealer)
   winner, winning_hand = compare_cards(player, dealer)
-
+  sleep 1
+  new_line
   if winner
     prompt("#{winner} won with #{total(winning_hand)}!")
   else
@@ -253,6 +256,7 @@ loop do
   show_dealers_cards(dealer)
   sleep 1
   winner = player_turn(deck, player)
+  sleep 1
   winner = dealer_turn(deck, dealer) unless winner
   declare_winner(player, dealer) unless winner
   break unless play_again?

@@ -11,6 +11,9 @@ FACE_CARDS = {
   "K" => "King", "A" => "Ace"
 }
 VALID_YES = %w(y yes)
+VALID_HIT = "h"
+VALID_STAY = "s"
+RETURN = "\r"
 
 def initialize_deck
   SUITS.product(CARDS)
@@ -54,7 +57,7 @@ end
 def show_rules?
   yml_prompt('rules?')
   answer = STDIN.getch.downcase
-  VALID_YES.include?(answer) || answer == "\r"
+  VALID_YES.include?(answer) || answer == RETURN
 end
 
 def show_rules
@@ -137,11 +140,11 @@ def player_turn(deck, player)
     new_line
     yml_prompt('hit_or_stay?')
     answer = STDIN.getch.downcase
-    if answer == 'h'
-      hit(deck, player) if answer == 'h'
+    if answer == VALID_HIT
+      hit(deck, player) if answer == VALID_HIT
       show_players_cards(player)
     end
-    break if answer == 's' || busted?(player)
+    break if answer == VALID_STAY || busted?(player)
   end
 
   if busted?(player)
@@ -233,7 +236,7 @@ def play_again?
   new_line
   yml_prompt('play_again?')
   answer = STDIN.getch.downcase
-  VALID_YES.include?(answer) || answer == "\r"
+  VALID_YES.include?(answer) || answer == RETURN
 end
 
 def reset(cards)

@@ -6,7 +6,7 @@ require 'pry-byebug'
 MESSAGES = YAML.load_file('twenty_one_messages.yml')
 SUITS = %w(spades hearts diamonds clubs)
 CARDS = %w(2 3 4 5 6 7 8 9 10 J Q K A)
-FACE_CARDS = { 
+FACE_CARDS = {
   "J" => "Jack", "Q" => "Queen",
   "K" => "King", "A" => "Ace"
 }
@@ -20,7 +20,7 @@ def initialize_deck
 end
 
 def initialize_hands
-  [[],[]]
+  [[], []]
 end
 
 def clear_screen
@@ -68,7 +68,7 @@ end
 
 def welcome_sequence
   welcome_message
-  show_rules if show_rules? 
+  show_rules if show_rules?
 end
 
 def deal_cards(deck, cards)
@@ -147,15 +147,14 @@ def player_turn(deck, player)
     break if answer == VALID_STAY || busted?(player)
   end
 
+  new_line
   if busted?(player)
-    new_line
     prompt("You busted with #{total(player)}!")
     prompt("Dealer wins!")
-    return 'Dealer'
+    'Dealer'
   else
-    new_line
     prompt('You chose to stay!')
-    return nil
+    nil
   end
 end
 
@@ -173,17 +172,15 @@ def dealer_turn(deck, dealer)
     hit(deck, dealer)
   end
 
+  new_line
   if busted?(dealer)
-    new_line
     prompt("Dealer busted with #{total(dealer)}")
     prompt("You win!")
-    return 'Player'
+    'Player'
   else
-    new_line
     prompt("Dealer chose to stay.")
-    return nil
+    nil
   end
-
 end
 
 def compare_cards(player, dealer)
@@ -191,8 +188,6 @@ def compare_cards(player, dealer)
     ["Player", player]
   elsif total(dealer) > total(player)
     ["Dealer", dealer]
-  else total(dealer) == total(player)
-    nil
   end
 end
 
@@ -212,13 +207,13 @@ def total(cards)
 
   sum = 0
   values.each do |value|
-    if value == "A"
-      sum += 11
-    elsif value.to_i == 0
-      sum += 10
-    else
-      sum += value.to_i
-    end
+    sum += if value == "A"
+             11
+           elsif value.to_i == 0
+             10
+           else
+             value.to_i
+           end
   end
 
   values.select { |value| value == "A" }.count.times do
@@ -239,15 +234,6 @@ def play_again?
   VALID_YES.include?(answer) || answer == RETURN
 end
 
-def reset(cards)
-  cards = []
-end
-
-def reset_hands(player, dealer)
-  reset(player)
-  reset(dealer)
-end
-
 welcome_sequence
 
 loop do
@@ -260,12 +246,10 @@ loop do
   sleep 1
   winner = player_turn(deck, player)
   sleep 1
-  winner = dealer_turn(deck, dealer) unless winner
+  winner ||= dealer_turn(deck, dealer)
   declare_winner(player, dealer) unless winner
   break unless play_again?
 end
 
 new_line
 yml_prompt('goodbye')
-
-

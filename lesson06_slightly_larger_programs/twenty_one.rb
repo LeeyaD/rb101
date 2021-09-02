@@ -1,7 +1,5 @@
 require 'yaml'
 require 'io/console'
-require 'pry'
-require 'pry-byebug'
 
 MESSAGES = YAML.load_file('twenty_one_messages.yml')
 SUITS = %w(spades hearts diamonds clubs)
@@ -19,7 +17,7 @@ def initialize_deck
   SUITS.product(CARDS)
 end
 
-def initialize_hands
+def initialize_cards
   [[], []]
 end
 
@@ -80,58 +78,95 @@ def deal_cards(deck, cards)
   end
 end
 
-def deal_first_2_cards(deck, player, dealer)
+def deal_2_cards(deck, player, dealer)
   clear_screen
   prompt('Dealing first two cards...')
   deal_cards(deck, player)
   deal_cards(deck, dealer)
 end
 
+def show_table(player, dealer)
+  sleep 1
+  show_players_cards(player)
+  sleep 0.5
+  show_dealers_cards(dealer)
+  sleep 1
+end
+
+def show_cards(suit, value)
+  if value.to_i == 0
+    prompt("#{FACE_CARDS[value]} of #{suit}")
+  else
+    prompt("#{value} of #{suit}")
+  end
+end
+
+def parse(card)
+  suit = card[0].capitalize
+  value = card[1]
+  [suit, value]
+end
+
 def show_players_cards(player)
   new_line
   prompt('You have in your hand:')
-  sleep 0.5
-  player.each do |card|
-    suit = card[0].capitalize
-    value = card[1]
 
-    if value.to_i == 0
-      prompt("#{FACE_CARDS[value]} of #{suit}")
-    else
-      prompt("#{value} of #{suit}")
-    end
+  player.each do |card|
     sleep 0.5
+    suit, value = parse(card)
+    show_cards(suit, value)
   end
 end
 
 def show_dealers_cards(dealer)
   new_line
   prompt('Dealer has:')
-  sleep 0.5
+
   dealer.each_with_index do |card, idx|
-    suit = card[0].capitalize
-    value = card[1]
+    sleep 0.5
+    suit, value = parse(card)
 
     if idx == 0
       prompt('[Hidden Card]')
       next
     end
 
-    if value.to_i == 0
-      prompt("#{FACE_CARDS[value]} of #{suit}")
-    else
-      prompt("#{value} of #{suit}")
-    end
-    sleep 0.5
+    show_cards(suit, value)
   end
+end
+
+def turns(deck, player, dealer)
+  winner = player_turn(deck, player)
+  sleep 1
+  winner ||= dealer_turn(deck, dealer)
+  winner
 end
 
 def hit(deck, player)
   clear_screen
   prompt('Dealing new card...')
-  sleep 1
+  sleep 0.5
   deal_cards(deck, player)
   sleep 1
+end
+
+def end_of_turn_sequence(current_player, player)
+  winner = nil
+  if busted?(player)
+    if current_player
+      prompt("You busted with #{total(player)}!")
+      prompt("Dealer wins!")
+      winner = 'Dealer'
+    else
+      prompt("Dealer busted with #{total(player)}")
+      prompt("You win!")
+      winner = 'Player'
+    end
+  else
+    prompt current_player ? 'You chose to stay!' : 'Dealer chose to stay.'
+  end
+
+  winner
 end
 
 def player_turn(deck, player)
@@ -148,14 +183,8 @@ def player_turn(deck, player)
   end
 
   new_line
-  if busted?(player)
-    prompt("You busted with #{total(player)}!")
-    prompt("Dealer wins!")
-    'Dealer'
-  else
-    prompt('You chose to stay!')
-    nil
-  end
+  current_player = true
+  end_of_turn_sequence(current_player, player)
 end
 
 def dealer_turn(deck, dealer)
@@ -173,14 +202,8 @@ def dealer_turn(deck, dealer)
   end
 
   new_line
-  if busted?(dealer)
-    prompt("Dealer busted with #{total(dealer)}")
-    prompt("You win!")
-    'Player'
-  else
-    prompt("Dealer chose to stay.")
-    nil
-  end
+  current_player = nil
+  end_of_turn_sequence(current_player, dealer)
 end
 
 def compare_cards(player, dealer)
@@ -234,22 +257,24 @@ def play_again?
   VALID_YES.include?(answer) || answer == RETURN
 end
 
+def goodbye_sequence
+  new_line
+  yml_prompt('goodbye')
+end
+
 welcome_sequence
 
 loop do
   deck = initialize_deck
-  player, dealer = initialize_hands
-  deal_first_2_cards(deck, player, dealer)
-  sleep 1
-  show_players_cards(player)
-  show_dealers_cards(dealer)
-  sleep 1
-  winner = player_turn(deck, player)
-  sleep 1
-  winner ||= dealer_turn(deck, dealer)
+  player, dealer = initialize_cards
+
+  deal_2_cards(deck, player, dealer)
+  show_table(player, dealer)
+
+  winner = turns(deck, player, dealer)
   declare_winner(player, dealer) unless winner
+
   break unless play_again?
 end
 
-new_line
-yml_prompt('goodbye')
+goodbye_sequence

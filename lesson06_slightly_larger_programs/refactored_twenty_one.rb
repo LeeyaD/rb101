@@ -9,8 +9,8 @@ FACE_CARDS = {
   "K" => "King", "A" => "Ace"
 }
 VALID_YES = %w(y yes)
-VALID_HIT = "h"
-VALID_STAY = "s"
+VALID_HIT = "hit"
+VALID_STAY = "stay"
 RETURN = "\r"
 
 def initialize_deck
@@ -174,7 +174,7 @@ def player_turn(deck, player)
   loop do
     new_line
     yml_prompt('hit_or_stay?')
-    answer = STDIN.getch.downcase
+    answer = gets.chomp.strip.downcase
     if answer == VALID_HIT
       hit(deck, player) if answer == VALID_HIT
       show_players_cards(player)

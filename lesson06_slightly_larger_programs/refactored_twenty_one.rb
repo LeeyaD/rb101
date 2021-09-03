@@ -173,6 +173,7 @@ def player_turn(deck, player)
   answer = nil
   loop do
     new_line
+    prompt("You have a total of #{total(player)}.")
     yml_prompt('hit_or_stay?')
     answer = gets.chomp.strip.downcase
     if answer == VALID_HIT
@@ -214,13 +215,21 @@ def compare_cards(player, dealer)
   end
 end
 
+def display_totals(player, dealer)
+  prompt("Player has #{total(player)}")
+  prompt("Dealer has #{total(dealer)}")
+  new_line
+end
+
 def declare_winner(player, dealer)
   winner, winning_hand = compare_cards(player, dealer)
   sleep 1
   new_line
   if winner
+    display_totals(player, dealer)
     prompt("#{winner} won with #{total(winning_hand)}!")
   else
+    display_totals(player, dealer)
     prompt("It's a draw!")
   end
 end

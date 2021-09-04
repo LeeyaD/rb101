@@ -1,5 +1,7 @@
 require 'yaml'
 require 'io/console'
+require 'pry'
+require 'pry-byebug'
 
 MESSAGES = YAML.load_file('twenty_one_messages.yml')
 SUITS = %w(spades hearts diamonds clubs)
@@ -257,7 +259,7 @@ def goodbye_sequence
   yml_prompt('goodbye')
 end
 
-welcome_sequence
+# welcome_sequence
 
 loop do
   deck = initialize_deck
@@ -270,7 +272,7 @@ loop do
   winner = turns(deck, hands)
   declare_winner(hands, :player, :dealer) unless winner
 
-  break unless play_again?
+  break #unless play_again?
 end
 
 goodbye_sequence

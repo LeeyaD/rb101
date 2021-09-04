@@ -1,5 +1,7 @@
 require 'yaml'
 require 'io/console'
+require 'pry'
+require 'pry-byebug'
 
 MESSAGES = YAML.load_file('twenty_one_messages.yml')
 SUITS = %w(spades hearts diamonds clubs)
@@ -16,11 +18,11 @@ GAME_LIMIT = 21
 DEALER_LIMIT = 17
 
 def initialize_deck
-  SUITS.product(CARDS)
+  CARDS.product(SUITS)
 end
 
 def initialize_hands
-  { dealer: {}, player: {} }
+  { dealer: [], player: [] }
 end
 
 def clear_screen
@@ -71,20 +73,19 @@ def welcome_sequence
   show_rules if show_rules?
 end
 
-def deal_cards(deck, cards)
+def deal_cards(deck, hands)
   deck.shuffle!
-  if cards.empty?
-    2.times { |_| cards << deck.shift }
-  else
-    cards << deck.shift
+
+  hands.keys.each do |player|
+    var = hands[player].empty? ? 2 : 1
+    var.times { hands[player] << [deck.shift].to_h }
   end
 end
 
-def deal_2_cards(deck, player, dealer)
+def deal_2_cards(deck, hands)
   clear_screen
   prompt('Dealing first two cards...')
-  deal_cards(deck, player)
-  deal_cards(deck, dealer)
+  deal_cards(deck, hands)
 end
 
 def show_table(player, dealer)
@@ -273,14 +274,15 @@ def goodbye_sequence
   yml_prompt('goodbye')
 end
 
-welcome_sequence
+# welcome_sequence
 
 loop do
   deck = initialize_deck
   hands = initialize_hands
+
+  deal_2_cards(deck, hands)
   p hands
-  # deal_2_cards(deck, player, dealer)
-  # show_table(player, dealer)
+  show_table(hands)
 
   # winner = turns(deck, player, dealer)
   # declare_winner(player, dealer) unless winner

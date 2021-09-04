@@ -18,7 +18,7 @@ GAME_LIMIT = 21
 DEALER_LIMIT = 17
 
 def initialize_deck
-  CARDS.product(SUITS)
+  (CARDS.product(SUITS)).shuffle!
 end
 
 def initialize_hands
@@ -73,95 +73,78 @@ def welcome_sequence
   show_rules if show_rules?
 end
 
-def deal_cards(deck, hands)
-  deck.shuffle!
-
-  hands.keys.each do |player|
-    var = hands[player].empty? ? 2 : 1
-    var.times { hands[player] << [deck.shift].to_h }
-  end
+def deal_card(deck, hands, player)
+    hands[player] << [deck.shift].to_h
 end
 
 def deal_2_cards(deck, hands)
   clear_screen
   prompt('Dealing first two cards...')
-  deal_cards(deck, hands)
-end
-
-def show_table(player, dealer)
-  sleep 1
-  show_players_cards(player)
-  sleep 0.5
-  show_dealers_cards(dealer)
-  sleep 1
-end
-
-def show_cards(suit, value)
-  if value.to_i == 0
-    prompt("#{FACE_CARDS[value]} of #{suit}")
-  else
-    prompt("#{value} of #{suit}")
+  hands.keys.each do |player|
+    2.times { deal_card(deck, hands, player) }
   end
 end
 
-def parse(card)
-  suit = card[0].capitalize
-  value = card[1]
-  [suit, value]
+def state_player(player)
+  new_line
+  player == :dealer ? prompt('Dealer has:') : prompt('You have in your hand:')
 end
 
-def show_players_cards(player)
-  new_line
-  prompt('You have in your hand:')
-
-  player.each do |card|
-    sleep 0.5
-    suit, value = parse(card)
-    show_cards(suit, value)
-  end
-end
-
-def show_dealers_cards(dealer)
-  new_line
-  prompt('Dealer has:')
-
-  dealer.each_with_index do |card, idx|
-    sleep 0.5
-    suit, value = parse(card)
-
-    if idx == 0
-      prompt('[Hidden Card]')
-      next
+def show_hand(card)
+  card.each do |value, suit|
+    if value.to_i == 0
+      prompt("#{FACE_CARDS[value]} of #{suit}")
+    else
+      prompt("#{value} of #{suit}")
     end
-
-    show_cards(suit, value)
   end
 end
 
-def turns(deck, player, dealer)
-  winner = player_turn(deck, player)
+def dealers_first_card?(player, index)
+  (player == :dealer) && (index == 0)
+end
+
+def display_table(hands)
   sleep 1
-  winner ||= dealer_turn(deck, dealer)
+  hands.keys.each do |player|
+    state_player(player)
+    hands[player].each_with_index do |card, idx|
+      sleep 0.75
+      if dealers_first_card?(player, idx)
+        prompt('[Hidden Card]')
+        next
+      end
+      show_hand(card)
+    end
+    sleep 0.5
+  end
+  sleep 1
+end
+
+def turns(deck, hands)
+  winner = player_turn(deck, hands, :player)
+  sleep 1
+  winner ||= dealer_turn(deck, hands, :dealer)
   winner
 end
 
-def hit(deck, player)
+def hit(deck, hands, player)
   clear_screen
   prompt('Dealing new card...')
   sleep 0.5
-  deal_cards(deck, player)
+  deal_card(deck, hands, player)
   sleep 1
 end
 
-def end_of_turn_sequence(current_player, player)
+def end_of_turn_sequence(current_player, hands, player)
   winner = nil
-  if busted?(player)
+  if busted?(hands[player])
     if current_player
-      prompt("You busted with #{total(player)}!")
+      prompt("You busted with #{total(hands[player])}!")
       prompt("Dealer wins!")
       winner = 'Dealer'
     else
-      prompt("Dealer busted with #{total(player)}")
+      prompt("Dealer busted with #{total(hands[player])}")
       prompt("You win!")
       winner = 'Player'
     end
@@ -172,73 +155,75 @@ def end_of_turn_sequence(current_player, player)
   winner
 end
 
-def player_turn(deck, player)
+def player_turn(deck, hands, player)
   answer = nil
   loop do
     new_line
-    prompt("You have a total of #{total(player)}.")
+    prompt("You have a total of #{total(hands[player])}.")
     yml_prompt('hit_or_stay?')
     answer = gets.chomp.strip.downcase
     if answer == VALID_HIT
-      hit(deck, player) if answer == VALID_HIT
-      show_players_cards(player)
+      hit(deck, hands, player) if answer == VALID_HIT
+      hands[player].each { |card| show_hand(card)}
     end
-    break if answer == VALID_STAY || busted?(player)
+    break if answer == VALID_STAY || busted?(hands[player])
   end
 
   new_line
   current_player = true
-  end_of_turn_sequence(current_player, player)
+  end_of_turn_sequence(current_player, hands, player)
 end
 
-def dealer_turn(deck, dealer)
+def dealer_turn(deck, hands, dealer)
   clear_screen
   prompt("Dealer's turn...")
   sleep 0.5
   loop do
-    show_dealers_cards(dealer)
-    break if total(dealer) >= DEALER_LIMIT || busted?(dealer)
+    hands[dealer].each { |card| show_hand(card)}
+    break if total(hands[dealer]) >= DEALER_LIMIT || busted?(hands[dealer])
     new_line
     prompt("Dealer chose to hit.")
     return_to_continue
     sleep 1
-    hit(deck, dealer)
+    hit(deck, hands, dealer)
   end
 
   new_line
   current_player = nil
-  end_of_turn_sequence(current_player, dealer)
+  end_of_turn_sequence(current_player, hands, dealer)
 end
 
-def compare_cards(player, dealer)
-  if total(player) > total(dealer)
-    ["Player", player]
-  elsif total(dealer) > total(player)
-    ["Dealer", dealer]
+def compare_cards(hands, player, dealer)
+  if total(hands[player]) > total(hands[dealer])
+    ["Player", hands[player]]
+  elsif total(hands[dealer]) > total(hands[player])
+    ["Dealer", hands[dealer]]
   end
 end
 
-def display_totals(player, dealer)
-  prompt("Player has #{total(player)}")
-  prompt("Dealer has #{total(dealer)}")
+def display_totals(hands, player, dealer)
+  prompt("Player has #{total(hands[player])}")
+  prompt("Dealer has #{total(hands[dealer])}")
   new_line
 end
 
-def declare_winner(player, dealer)
-  winner, winning_hand = compare_cards(player, dealer)
+def declare_winner(hands, player, dealer)
+  winner, winning_hand = compare_cards(hands, player, dealer)
   sleep 1
   new_line
   if winner
-    display_totals(player, dealer)
+    display_totals(hands, player, dealer)
     prompt("#{winner} won with #{total(winning_hand)}!")
   else
-    display_totals(player, dealer)
+    display_totals(hands, player, dealer)
     prompt("It's a draw!")
   end
 end
 
 def total(cards)
-  values = cards.map { |card| card[1] }
+  values = cards.map do |card| 
+    card.keys[0]
+  end
 
   sum = 0
   values.each do |value|
@@ -282,10 +267,10 @@ loop do
 
   deal_2_cards(deck, hands)
   p hands
-  show_table(hands)
+  display_table(hands)
 
-  # winner = turns(deck, player, dealer)
-  # declare_winner(player, dealer) unless winner
+  winner = turns(deck, hands)
+  declare_winner(hands, :player, :dealer) unless winner
 
   break #unless play_again?
 end

@@ -12,13 +12,15 @@ VALID_YES = %w(y yes)
 VALID_HIT = "hit"
 VALID_STAY = "stay"
 RETURN = "\r"
+GAME_LIMIT = 21
+DEALER_LIMIT = 17
 
 def initialize_deck
   SUITS.product(CARDS)
 end
 
-def initialize_cards
-  [[], []]
+def initialize_hands
+  { dealer: {}, player: {} }
 end
 
 def clear_screen
@@ -47,7 +49,7 @@ end
 
 def welcome_message
   clear_screen
-  yml_prompt('welcome')
+  puts format(MESSAGES['welcome'], "21": "#{GAME_LIMIT}")
   sleep 1
   return_to_continue
 end
@@ -60,7 +62,7 @@ end
 
 def show_rules
   clear_screen
-  yml_prompt('rules')
+  puts format(MESSAGES['rules'], "21": "#{GAME_LIMIT}", "17": "#{DEALER_LIMIT}")
   return_to_continue
 end
 
@@ -194,7 +196,7 @@ def dealer_turn(deck, dealer)
   sleep 0.5
   loop do
     show_dealers_cards(dealer)
-    break if total(dealer) >= 17 || busted?(dealer)
+    break if total(dealer) >= DEALER_LIMIT || busted?(dealer)
     new_line
     prompt("Dealer chose to hit.")
     return_to_continue
@@ -249,14 +251,14 @@ def total(cards)
   end
 
   values.select { |value| value == "A" }.count.times do
-    sum -= 10 if sum > 21
+    sum -= 10 if sum > GAME_LIMIT
   end
 
   sum
 end
 
 def busted?(cards)
-  total(cards) > 21
+  total(cards) > GAME_LIMIT
 end
 
 def play_again?
@@ -275,15 +277,15 @@ welcome_sequence
 
 loop do
   deck = initialize_deck
-  player, dealer = initialize_cards
+  hands = initialize_hands
+  p hands
+  # deal_2_cards(deck, player, dealer)
+  # show_table(player, dealer)
 
-  deal_2_cards(deck, player, dealer)
-  show_table(player, dealer)
+  # winner = turns(deck, player, dealer)
+  # declare_winner(player, dealer) unless winner
 
-  winner = turns(deck, player, dealer)
-  declare_winner(player, dealer) unless winner
-
-  break unless play_again?
+  break #unless play_again?
 end
 
 goodbye_sequence

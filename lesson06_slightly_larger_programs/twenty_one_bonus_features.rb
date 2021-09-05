@@ -1,7 +1,5 @@
 require 'yaml'
 require 'io/console'
-require 'pry'
-require 'pry-byebug'
 
 MESSAGES = YAML.load_file('twenty_one_messages.yml')
 SUITS = %w(spades hearts diamonds clubs)
@@ -16,7 +14,22 @@ VALID_STAY = "stay"
 RETURN = "\r"
 GAME_LIMIT = 21
 DEALER_LIMIT = 17
-# wins = 2
+wins = 0
+
+def valid?(input)
+  (input.to_i.to_s == input) && (input.to_i > 0)
+end
+
+def set_wins
+  answer = nil
+  loop do
+    yml_prompt('how_many_wins?')
+    answer = gets.chomp.strip
+    break if valid?(answer)
+    yml_prompt('invalid_answer')
+  end
+  answer.to_i
+end
 
 def initialize_deck
   (CARDS.product(SUITS)).shuffle!
@@ -27,7 +40,7 @@ def initialize_hands
 end
 
 def initialize_scoreboard
-  { dealer: 0, player: 0 }
+  { Dealer: 0, Player: 0 }
 end
 
 def clear_screen
@@ -149,22 +162,27 @@ def hit(deck, hands, player)
   sleep 0.5
 end
 
+def busted_prompt(player, card_total, winner)
+  if player
+    prompt("You busted with #{card_total}!")
+    prompt("Dealer wins!")
+    winner = 'Dealer'
+  else
+    prompt("Dealer busted with #{card_total}")
+    prompt("You win!")
+    winner = 'Player'
+  end
+  winner
+end
+
 def end_of_turn_sequence(current_player, card_total)
   winner = nil
+  sleep 0.75
   if busted?(card_total)
-    if current_player
-      prompt("You busted with #{card_total}!")
-      prompt("Dealer wins!")
-      winner = 'Dealer'
-    else
-      prompt("Dealer busted with #{card_total}")
-      prompt("You win!")
-      winner = 'Player'
-    end
+    winner = busted_prompt(current_player, card_total, winner)
   else
     prompt current_player ? 'You chose to stay!' : 'Dealer chose to stay.'
   end
-
   [winner, card_total]
 end
 
@@ -192,11 +210,11 @@ def dealer_turn(deck, hands, dealer_sym, d_total)
   prompt("Dealer's turn...")
   loop do
     show_cards(hands, dealer_sym)
+    sleep 0.5
     break if d_total >= DEALER_LIMIT || busted?(d_total)
     new_line
     prompt("Dealer chose to hit.")
     return_to_continue
-    sleep 0.5
     hit(deck, hands, dealer_sym)
     d_total = total(hands[dealer_sym])
   end
@@ -216,6 +234,7 @@ end
 
 def display_totals(p_total, d_total)
   prompt("Player has #{p_total}")
+  sleep 0.5
   prompt("Dealer has #{d_total}")
   new_line
 end
@@ -225,11 +244,13 @@ def declare_winner(hands, p_total, d_total)
   sleep 1
   new_line
   display_totals(p_total, d_total)
+  sleep 0.5
   if winner
     prompt("#{winner} won with #{total(winning_hand)}!")
   else
     prompt("It's a draw!")
   end
+  winner
 end
 
 def get_values(cards)
@@ -275,8 +296,51 @@ def goodbye_sequence
   yml_prompt('goodbye')
 end
 
+def update_score(scoreboard, winner)
+  (scoreboard[winner.to_sym] += 1) if winner
+end
+
+def display_score(scoreboard)
+  return_to_continue
+  prompt('The score is...')
+  scoreboard.keys.each do |player|
+    prompt("#{player.to_sym}: #{scoreboard[player]}")
+  end
+  sleep 1
+end
+
+def update_and_display_score(scoreboard, winner)
+  update_score(scoreboard, winner)
+  display_score(scoreboard)
+end
+
+def find_grand_winner(scoreboard, wins)
+  scoreboard.key(wins)
+end
+
+def declare_grand_winner(grand_winner, wins)
+  sleep 1
+  new_line
+  prompt("#{grand_winner} is the Grand Winner with #{wins} win(s)!")
+  sleep 1
+end
+
+def reset_score(scoreboard)
+  scoreboard.keys.each do |player|
+    scoreboard[player] = 0
+  end
+end
+
+def grand_winner_sequence(grand_winner, scoreboard, wins)
+  if grand_winner
+    declare_grand_winner(grand_winner, wins)
+    reset_score(scoreboard)
+  end
+end
+
 welcome_sequence
-# scoreboard = initialize_scoreboard
+scoreboard = initialize_scoreboard
+wins = set_wins
 
 loop do
   deck = initialize_deck
@@ -286,9 +350,14 @@ loop do
   display_table(hands)
 
   winner, p_total, d_total = turns(deck, hands, p_total, d_total)
-  declare_winner(hands, p_total, d_total) unless winner
+  winner ||= declare_winner(hands, p_total, d_total)
+
+  update_and_display_score(scoreboard, winner)
+  grand_winner = find_grand_winner(scoreboard, wins)
+  grand_winner_sequence(grand_winner, scoreboard, wins)
 
   break unless play_again?
+  wins = set_wins if grand_winner
 end
 
 goodbye_sequence

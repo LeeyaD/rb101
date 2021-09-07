@@ -12,16 +12,23 @@
 #   end
 # end
 
-def reverse(array)
-  results = []
-  counter = -1
+# def reverse(array)
+#   results = []
+#   counter = -1
 
-  loop do
-    break if array[counter] == nil
-    results << array[counter]
-    counter -= 1
+#   loop do
+#     break if array[counter] == nil
+#     results << array[counter]
+#     counter -= 1
+#   end
+#   results
+# end
+
+def reverse(array)
+  idx = -1
+  array.each_with_object([]) do |e, arr|
+    arr.unshift(e)
   end
-  results
 end
 
 puts reverse([1,2,3,4]) == [4,3,2,1]        # => true

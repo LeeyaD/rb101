@@ -28,27 +28,27 @@
 # 4. Stop counting when the length of the # being shoveled on matched the given length
 
 def find_fibonacci_index_by_length(length)
-  # fibonacci = [1, 1]
-  # loop do
-  #   fibonacci << (fibonacci[-1] + fibonacci[-2])
-  #   break if (fibonacci[-1].digits.size) == length
-  # end
-  # fibonacci.size
-
-  first = 1
-  second = 1
-  index = 2
-
+  fibonacci = [1, 1]
   loop do
-    index += 1
-    fibonacci = first + second
-    break if fibonacci.to_s.size >= length
-
-    first = second
-    second = fibonacci
+    fibonacci << (fibonacci[-1] + fibonacci[-2])
+    break if (fibonacci[-1].digits.size) == length
   end
+  fibonacci.size
 
-  index
+  # first = 1
+  # second = 1
+  # index = 2
+
+  # loop do
+  #   index += 1
+  #   fibonacci = first + second
+  #   break if fibonacci.to_s.size >= length
+
+  #   first = second
+  #   second = fibonacci
+  # end
+
+  # index
 end
 
 puts find_fibonacci_index_by_length(2) == 7          # 1 1 2 3 5 8 13

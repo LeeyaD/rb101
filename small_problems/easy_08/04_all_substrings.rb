@@ -17,8 +17,19 @@ def leading_substrings(string)
   substrings
 end
 
+def substrings(string)
+  results = []
+  
+  loop do
+    results << leading_substrings(string)
+    string.slice!(0, 1)
+    break if string.empty?
+  end
 
-substrings('abcde') == [
+  results.flatten
+end
+
+puts substrings('abcde') == [
   'a', 'ab', 'abc', 'abcd', 'abcde',
   'b', 'bc', 'bcd', 'bcde',
   'c', 'cd', 'cde',

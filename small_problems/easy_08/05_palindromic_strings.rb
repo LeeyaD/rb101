@@ -47,3 +47,50 @@ palindromes('hello-madam-did-madam-goodbye') == [
 palindromes('knitting cassettes') == [
   'nittin', 'itti', 'tt', 'ss', 'settes', 'ette', 'tt'
 ]
+
+# FURTHER EXPLORATION
+# # Can you modify this method (and/or its predecessors) to ignore non-alphanumeric characters and case? Alphanumeric characters are alphabetic characters(upper and lowercase) and digits.
+
+def leading_substrings(string)
+  substrings = []
+  
+  1.upto(string.size) do |idx|
+  	substrings << string[0, idx]
+  	end
+  substrings
+end
+
+def palindrome?(string)
+  str = string.downcase
+  str == str.reverse
+end
+
+def substrings(string)
+  results = []
+  
+  loop do
+    results << leading_substrings(string)
+    string.slice!(0, 1)
+    break if string.empty?
+  end
+
+  results.flatten
+end
+
+def palindromes(string)
+  new_string = string.gsub(/[^A-z0-9]/, '')
+  array = substrings(new_string)
+  
+  array.select do |str|
+    palindrome?(str) && str.size >= 2
+  end
+end
+
+
+puts palindromes('abcd') == []
+puts palindromes('madam') == ['madam', 'ada']
+puts palindromes('mad-am') == ['madam', 'ada']
+puts palindromes('mAD-am') == ['mADam', 'ADa']
+puts palindromes('knitting cassettes') == [
+  'nittin', 'itti', 'tt', 'ss', 'settes', 'ette', 'tt'
+]

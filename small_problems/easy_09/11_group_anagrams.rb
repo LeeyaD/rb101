@@ -8,3 +8,23 @@ words =  ['demo', 'none', 'tied', 'evil', 'dome', 'mode', 'live',
 # ["demo", "dome", "mode"]
 # ["none", "neon"]
 #(etc)
+
+def anagrams(array)
+  dup_arr = array.clone
+  counter = 0
+
+  while !dup_arr.empty?
+    curr_anagram = dup_arr.shift.chars
+    group = []
+    array.each do |word|
+      if curr_anagram.all? { |l| word.include?(l) }
+        group << word 
+        dup_arr.delete(word)
+      end
+    end
+    p group
+    counter += 1
+  end
+end
+
+anagrams(words)

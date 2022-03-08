@@ -30,24 +30,33 @@
 # - so on until the end
 # Iterate thru array, selecting the indexes of the true elements
 
-def light_switching(n)
-  lights = Array.new(n, false)
-
-  1.upto(n) do |num|
-    lights.map!.with_index do |light, idx|
-      if (idx + 1) % num == 0
-        light = light ? false : true
-      end
-      light
-    end
-  end
-
+def on_lights(array)
   switched_on = []
-  lights.each_with_index do |light, idx|
+  array.each_with_index do |light, idx|
     switched_on << (idx + 1) if light
   end
   
   switched_on
+end
+
+def toggle_switches(lights, n)
+  lights.map!.with_index do |light, idx|
+    if (idx + 1) % n == 0
+      light = light ? false : true
+    end
+    
+    light
+  end
+end
+
+def light_switching(n)
+  lights = Array.new(n, false)
+
+  1.upto(n) do |n|
+    toggle_switches(lights, n)
+  end
+
+  on_lights(lights)
 end
 
 p light_switching(5) == [1, 4]
